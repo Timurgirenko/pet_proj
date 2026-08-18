@@ -1,0 +1,29 @@
+<header>
+  <div class="wrap">
+    <a href="#" class="logo">Краля</a>
+    <nav class="links">
+      <a href="#catalog">Каталог</a>
+      <a href="#about">О бренде</a>
+      <a href="#sizes">Размеры</a>
+      <a href="#location">Магазин</a>
+      <a href="#contact">Контакты</a>
+    </nav>
+    <a class="btn solid" href="#contact">Написать</a>
+    <button class="burger" id="burger" aria-label="Открыть меню" aria-expanded="false" aria-controls="mobileNav">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- Вынесены за пределы <header>: у header есть backdrop-filter, а он создаёт
+     свою систему координат для потомков с position:fixed, из-за чего меню
+     "сжималось" и теряло фон вместо того, чтобы закрывать весь экран. -->
+<div class="mobile-overlay" id="mobileOverlay"></div>
+<nav class="mobile-nav" id="mobileNav">
+  <a href="#catalog">Каталог</a>
+  <a href="#about">О бренде</a>
+  <a href="#sizes">Размеры</a>
+  <a href="#location">Магазин</a>
+  <a href="#contact">Контакты</a>
+  <a class="btn solid mobile-cta" href="#contact">Написать</a>
+</nav>
