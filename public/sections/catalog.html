@@ -36,18 +36,15 @@
       <div class="catalog-grid">
         <p class="catalog-status" v-if="statusText" :class="{ 'is-error': error }">{{ statusText }}</p>
         <p class="catalog-status" v-if="!statusText && !filteredProducts.length">По этому фильтру ничего не нашлось.</p>
-        <div class="look" v-for="(p, i) in filteredProducts" :key="p.id">
+        <a class="look" v-for="(p, i) in filteredProducts" :key="p.id" :href="'product.html?id=' + encodeURIComponent(p.id)">
           <div class="art">
             <svg viewBox="0 0 100 120">
               <path :d="silhouette(i).d" fill="none" :stroke="silhouette(i).color" stroke-width="1.4"/>
             </svg>
           </div>
-          <p class="idx">Look {{ pad(i + 1) }}</p>
           <h3>{{ p.name }}</h3>
-          <p class="fabric">{{ p.fabric }}</p>
           <p class="price">{{ formatPrice(p.price) }}</p>
-          <a class="btn order" :href="orderLink(p)" target="_blank" rel="noopener">Заказать в Telegram</a>
-        </div>
+        </a>
       </div>
 
     </div>

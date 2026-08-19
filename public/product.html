@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Краля — карточка товара</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400;1,9..144,500&family=Work+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.4.31/vue.global.prod.min.js"></script>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <a href="index.html" class="logo">Краля</a>
+    <div style="display:flex; align-items:center; gap:8px;">
+      <a class="btn" href="index.html#catalog">← В каталог</a>
+      <button class="cart-toggle" aria-label="Открыть корзину">
+        <svg viewBox="0 0 20 20" width="19" height="19" fill="none"><path d="M4 6h12l-1 9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1L4 6Z" stroke="currentColor" stroke-width="1.3"/><path d="M7 6a3 3 0 0 1 6 0" stroke="currentColor" stroke-width="1.3"/></svg>
+        <span class="cart-count is-empty">0</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div data-include="sections/cart-panel.html"></div>
+
+<main id="product-app">
+
+  <div class="wrap product-wrap" v-if="product">
+    <nav class="breadcrumbs">
+      <a href="index.html#catalog">Магазин</a>
+      <span>/</span>
+      <a href="index.html#catalog">{{ product.category || 'Без категории' }}</a>
+      <span>/</span>
+      <span>{{ product.name }}</span>
+    </nav>
+
+    <div class="product-layout">
+      <div class="product-gallery">
+        <div class="product-gallery-main">
+          <svg viewBox="0 0 100 120">
+            <path :d="art.d" fill="none" :stroke="art.color" stroke-width="1"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="product-info">
+        <h1>{{ product.name }}</h1>
+        <p class="product-fabric">{{ product.fabric }}</p>
+
+        <div class="size-block">
+          <p class="size-block-label">Размер</p>
+          <div class="size-options">
+            <button
+              v-for="s in sizes" :key="s"
+              type="button"
+              :class="{ active: selectedSize === s }"
+              @click="selectedSize = s"
+            >{{ s }}</button>
+          </div>
+        </div>
+
+        <p class="product-price">{{ formatPrice(product.price) }}</p>
+
+        <div class="qty-stepper">
+          <button type="button" @click="qty = Math.max(1, qty - 1)" aria-label="Уменьшить количество">−</button>
+          <span>{{ qty }}</span>
+          <button type="button" @click="qty = qty + 1" aria-label="Увеличить количество">+</button>
+        </div>
+
+        <div class="product-actions">
+          <button type="button" class="btn solid add-to-cart-btn" @click="addToCart">{{ justAdded ? 'Добавлено ✓' : 'Добавить в корзину' }}</button>
+          <a class="btn order-btn" :href="orderLink" target="_blank" rel="noopener">Заказать в Telegram</a>
+        </div>
+
+        <div class="accordion">
+          <div class="accordion-item">
+            <button class="accordion-head" @click="open.description = !open.description">
+              <span>Описание</span>
+              <span class="accordion-icon">{{ open.description ? '−' : '+' }}</span>
+            </button>
+            <div class="accordion-body" v-if="open.description">
+              <p>{{ product.fabric || 'Состав уточняется у продавца.' }}. Категория: {{ product.category || 'без категории' }}.</p>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <button class="accordion-head" @click="open.sizes = !open.sizes">
+              <span>Размерная сетка</span>
+              <span class="accordion-icon">{{ open.sizes ? '−' : '+' }}</span>
+            </button>
+            <div class="accordion-body" v-if="open.sizes">
+              <table class="size-table">
+                <tr><th>Размер</th><th>Грудь, см</th><th>Талия, см</th><th>Бёдра, см</th></tr>
+                <tr><td>XS</td><td>82–85</td><td>62–65</td><td>88–91</td></tr>
+                <tr><td>S</td><td>86–89</td><td>66–69</td><td>92–95</td></tr>
+                <tr><td>M</td><td>90–93</td><td>70–74</td><td>96–99</td></tr>
+                <tr><td>L</td><td>94–98</td><td>75–80</td><td>100–104</td></tr>
+              </table>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <button class="accordion-head" @click="open.delivery = !open.delivery">
+              <span>Доставка</span>
+              <span class="accordion-icon">{{ open.delivery ? '−' : '+' }}</span>
+            </button>
+            <div class="accordion-body" v-if="open.delivery">
+              <p>Отправляем по России транспортной компанией или почтой. Точные сроки и стоимость уточняем в переписке после подтверждения заказа.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap product-not-found" v-else>
+    <p>{{ loading ? 'Загружаем товар…' : 'Товар не найден.' }}</p>
+    <a class="btn" href="index.html#catalog" v-if="!loading">Вернуться в каталог</a>
+  </div>
+
+</main>
+
+<div data-include="sections/footer.html"></div>
+
+<script src="js/shared.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/include.js"></script>
+<script src="js/product.js"></script>
+<script src="js/cart-panel.js"></script>
+
+</body>
+</html>
