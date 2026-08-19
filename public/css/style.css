@@ -259,6 +259,10 @@ section{padding:76px 0;}
   font-family:'Space Mono', monospace; font-size:13px; color:var(--olive);
 }
 .catalog-status.is-error{color:var(--indigo);}
+.catalog-demo-note{
+  font-family:'Space Mono', monospace; font-size:12px; color:var(--olive);
+  margin-bottom:18px;
+}
 .look{background:var(--paper); padding:22px 20px 26px; display:flex; flex-direction:column;}
 .look .art{
   aspect-ratio:3/4; width:100%; margin-bottom:18px;

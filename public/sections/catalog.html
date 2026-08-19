@@ -11,6 +11,8 @@
     <!-- Каталог целиком рисует Vue-приложение, см. js/catalog.js -->
     <div id="catalog-app">
 
+      <p class="catalog-demo-note" v-if="isDemo">Показаны примеры товаров — как только подключите МойСклад, здесь появится ваш настоящий каталог.</p>
+
       <div class="filters-bar">
         <nav class="filters-bar-list">
           <a href="#" :class="{ active: selectedCategory === 'all' }" @click.prevent="selectedCategory = 'all'">Все товары</a>

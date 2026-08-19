@@ -8,6 +8,33 @@ const SILHOUETTES = [
 // Замените на настоящий юзернейм магазина в Telegram
 const TELEGRAM_USERNAME = 'your_shop_username';
 
+// Показываются, пока в МойСклад не подключены реальные товары —
+// чтобы каталог не выглядел пустым. Как только API отдаст настоящие
+// товары, эти карточки автоматически заменятся.
+const DEMO_PRODUCTS = [
+  {
+    id: 'demo-1',
+    name: 'Платье-рубашка',
+    fabric: 'Вискоза, бордовый',
+    price: 5200,
+    category: 'Платья'
+  },
+  {
+    id: 'demo-2',
+    name: 'Костюм с жакетом',
+    fabric: 'Костюмная ткань, чёрный',
+    price: 8900,
+    category: 'Костюмы'
+  },
+  {
+    id: 'demo-3',
+    name: 'Шуба из эко-меха',
+    fabric: 'Эко-мех, карамель',
+    price: 15400,
+    category: 'Шубы и дублёнки'
+  }
+];
+
 function mountCatalogApp() {
   const { createApp } = Vue;
 
@@ -17,6 +44,7 @@ function mountCatalogApp() {
         products: [],
         loading: true,
         error: null,
+        isDemo: false,
         selectedCategory: 'all',
         searchQuery: '',
         searchOpen: false
@@ -24,9 +52,8 @@ function mountCatalogApp() {
     },
     computed: {
       statusText() {
-        if (this.error) return 'Не удалось загрузить товары: ' + this.error;
         if (this.loading) return 'Загружаем товары из МойСклад…';
-        if (!this.products.length) return 'Товары пока не загружены. Проверьте настройки МойСклад в .env на сервере.';
+        if (!this.products.length) return 'Товары не найдены.';
         return '';
       },
       categories() {
@@ -68,9 +95,15 @@ function mountCatalogApp() {
           const res = await fetch('/api/products');
           if (!res.ok) throw new Error('сервер ответил ' + res.status);
           const data = await res.json();
-          this.products = data.products || [];
+          const real = data.products || [];
+          this.products = real.length ? real : DEMO_PRODUCTS;
+          this.isDemo = !real.length;
         } catch (err) {
+          // МойСклад ещё не настроен или недоступен — показываем демо-товары,
+          // а не голую ошибку, чтобы раздел не выглядел пустым/сломанным.
           this.error = err.message;
+          this.products = DEMO_PRODUCTS;
+          this.isDemo = true;
         } finally {
           this.loading = false;
         }
